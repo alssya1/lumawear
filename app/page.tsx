@@ -90,13 +90,16 @@ function getSize({
   bust: string;
   waist: string;
   hips: string;
-}) {  const h = Number(height);
+}) {
+  const h = Number(height);
   const b = Number(bust);
   const w = Number(waist);
   const hp = Number(hips);
 
   const max = Math.max(b || 0, w || 0, hp || 0);
+
   let size = "M";
+
   if (max < 34) size = "XS";
   else if (max < 38) size = "S";
   else if (max < 42) size = "M";
@@ -105,6 +108,7 @@ function getSize({
   else size = "2X";
 
   let length = "Regular";
+
   if (h && h < 160) length = "Petite";
   if (h && h > 173) length = "Tall";
 
