@@ -80,8 +80,17 @@ const quizQuestions = [
   },
 ];
 
-function getSize({ height, bust, waist, hips }) {
-  const h = Number(height);
+function getSize({
+  height,
+  bust,
+  waist,
+  hips,
+}: {
+  height: string;
+  bust: string;
+  waist: string;
+  hips: string;
+}) {  const h = Number(height);
   const b = Number(bust);
   const w = Number(waist);
   const hp = Number(hips);
