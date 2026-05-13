@@ -114,20 +114,26 @@ function getSize({
 
   return { size, length };
 }
-
+type MeasurementKey = "height" | "bust" | "waist" | "hips" | "inseam";
 export default function LumawearRedesign() {
-  const [quiz, setQuiz] = useState({});
-  const [photo, setPhoto] = useState(null);
+const [quiz, setQuiz] = useState<Record<number, string>>({});
+const [photo, setPhoto] = useState<string | null>(null);
   const [measurements, setMeasurements] = useState({ height: "", bust: "", waist: "", hips: "", inseam: "" });
   const [firstName, setFirstName] = useState("");
 const [email, setEmail] = useState("");
 const [submitted, setSubmitted] = useState(false);
 
-  const quizResult = useMemo(() => {
-    const counts = Object.values(quiz).reduce((acc, value) => ({ ...acc, [value]: (acc[value] || 0) + 1 }), {});
-    const winner = Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] || "Calm";
-    return scrubColors[winner];
-  }, [quiz]);
+ const quizResult = useMemo(() => {
+  const counts: Record<string, number> = {};
+
+  Object.values(quiz).forEach((value) => {
+    counts[value] = (counts[value] || 0) + 1;
+  });
+
+  const winner = Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] || "Calm";
+
+  return scrubColors[winner as keyof typeof scrubColors];
+}, [quiz]);
 
   const sizeResult = useMemo(() => getSize(measurements), [measurements]);
   const handleWaitlistSubmit = async (e: React.FormEvent) => {
@@ -325,17 +331,22 @@ const [submitted, setSubmitted] = useState(false);
                 ["waist", "Waist (in)"],
                 ["hips", "Hips (in)"],
                 ["inseam", "Inseam (in)"],
-              ].map(([key, label]) => (
+             ].map(([key, label]) => {
+  const measurementKey = key as MeasurementKey;
+
+  return (
                 <label key={key} className="text-sm font-bold text-slate-600">
                   {label}
                   <input
-                    value={measurements[key]}
-                    onChange={(e) => setMeasurements({ ...measurements, [key]: e.target.value })}
-                    className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none focus:border-emerald-400"
+                   value={measurements[measurementKey]}
+onChange={(e) =>
+  setMeasurements({ ...measurements, [measurementKey]: e.target.value })
+}                    className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none focus:border-emerald-400"
                     placeholder="Enter number"
                   />
                 </label>
-              ))}
+             );
+})}
             </div>
             <div className="mt-8 rounded-[2rem] bg-slate-900 p-6 text-white">
               <p className="text-sm font-bold text-emerald-200">Recommended starting point</p>
